@@ -24,4 +24,3 @@ function ItemAddForm({ handleAdd }) {
 }
 
 export default ItemAddForm;
-

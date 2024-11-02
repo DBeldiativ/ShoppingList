@@ -17,4 +17,3 @@ function UnresolvedItemsFilter({ isFiltered, handleToggle }) {
 }
 
 export default UnresolvedItemsFilter;
-

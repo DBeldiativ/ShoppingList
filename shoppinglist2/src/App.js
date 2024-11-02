@@ -11,16 +11,24 @@ function App() {
         members: ["Vlastník", "Člen 1", "Člen 2"],
     });
 
+    
+    const [userRole, setUserRole] = useState("owner");
+
+    
+    const toggleRole = () => {
+        setUserRole((prevRole) => (prevRole === "owner" ? "member" : "owner"));
+    };
+
     const handleEditName = (newName) => {
         setListData((prevData) => ({
             ...prevData,
-            name: newName, // Aktualizuj název seznamu
+            name: newName,
         }));
     };
 
     const handleAddItem = (itemName) => {
         const newItem = {
-            id: Date.now(), // Generuj unikátní ID na základě času
+            id: Date.now(),
             name: itemName,
             isResolved: false,
         };
@@ -31,14 +39,13 @@ function App() {
     };
 
     const handleDeleteList = () => {
-        // Zde můžeš implementovat logiku pro smazání seznamu, pokud je to potřeba
-        // Například, pokud bys měl více seznamů
+        
     };
 
     const handleAddMember = (newMember) => {
         setListData((prevData) => ({
             ...prevData,
-            members: [...prevData.members, newMember], // Přidá nového člena do pole členů
+            members: [...prevData.members, newMember],
         }));
     };
 
@@ -67,7 +74,11 @@ function App() {
 
     return (
         <div>
+            <button onClick={toggleRole}>
+                Přepnout roli (Aktuální role: {userRole})
+            </button>
             <ShoppingListDetail
+                userRole={userRole}
                 listData={listData}
                 handleAddItem={handleAddItem}
                 handleRemoveItem={handleRemoveItem}
