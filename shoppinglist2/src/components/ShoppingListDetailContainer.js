@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useShoppingList } from '../context/ShoppingListContext';
 import { useUser } from '../components/User/UserProvider';
+import Header from './Header';
+import RoleSwitcher from './RoleSwitcher';
+import ListTitleEditor from './ListTitleEditor';
+import FilterButton from './FilterButton';
 import ItemList from './ItemList';
 import MemberManagement from './MemberManagement';
 
@@ -17,7 +21,6 @@ const ShoppingListDetailContainer = () => {
 
     const { currentUser, switchUser } = useUser();
     const [currentListId, setCurrentListId] = useState(1); // Výchozí ID seznamu
-    const [newListName, setNewListName] = useState(''); // Pro zadání nového názvu seznamu
     const [showResolvedOnly, setShowResolvedOnly] = useState(false); // Filtrování vyřešených položek
     const currentList = shoppingLists.find((list) => list.id === currentListId);
 
@@ -29,43 +32,19 @@ const ShoppingListDetailContainer = () => {
 
     return (
         <div>
-            <h1>{currentList.name}</h1> {/* Zobrazení aktuálního názvu seznamu */}
-            <p>Přihlášený uživatel: {currentUser.name}</p>
-
-            {/* Přepínání rolí */}
-            <button onClick={() => switchUser(currentList.owner, "Vlastník")}>
-                Přepnout na vlastníka
-            </button>
-            <button
-                onClick={() =>
-                    currentList.members.length > 0 &&
-                    switchUser(currentList.members[0], "Člen")
-                }
-            >
-                Přepnout na člena
-            </button>
-
-            {/* Úprava názvu seznamu */}
+            <Header title={currentList.name} userName={currentUser.name} />
+            <RoleSwitcher
+                isOwner={isOwner}
+                ownerId={currentList.owner}
+                members={currentList.members || []}
+                switchUser={switchUser}
+            />
             {isOwner && (
-                <div>
-                    <input
-                        type="text"
-                        value={newListName}
-                        onChange={(e) => setNewListName(e.target.value)}
-                        placeholder="Nový název seznamu"
-                    />
-                    <button
-                        onClick={() => {
-                            handleEditName(currentList.id, newListName);
-                            setNewListName(''); // Vymazání inputu po změně
-                        }}
-                    >
-                        Uložit název
-                    </button>
-                </div>
+                <ListTitleEditor
+                    currentTitle={currentList.name}
+                    onSave={(newTitle) => handleEditName(currentList.id, newTitle)}
+                />
             )}
-
-            {/* Správa členů */}
             {isOwner && (
                 <MemberManagement
                     members={currentList.members || []}
@@ -73,21 +52,16 @@ const ShoppingListDetailContainer = () => {
                     onRemoveMember={(memberId) => handleRemoveMember(currentList.id, memberId)}
                 />
             )}
-
-            {/* Zobrazení položek */}
             <ItemList
                 items={currentList.items}
                 showResolvedOnly={showResolvedOnly}
                 onToggleItem={(itemId) => handleToggleItem(currentList.id, itemId)}
                 onRemoveItem={(itemId) => handleRemoveItem(currentList.id, itemId)}
             />
-
-            {/* Přepínání zobrazení položek */}
-            <button onClick={() => setShowResolvedOnly(!showResolvedOnly)}>
-                {showResolvedOnly ? "Zobrazit všechny položky" : "Zobrazit pouze vyřešené"}
-            </button>
-
-            {/* Přidání nové položky */}
+            <FilterButton
+                showResolvedOnly={showResolvedOnly}
+                toggleFilter={() => setShowResolvedOnly(!showResolvedOnly)}
+            />
             <div>
                 <input
                     type="text"
@@ -116,6 +90,3 @@ const ShoppingListDetailContainer = () => {
 };
 
 export default ShoppingListDetailContainer;
-
-
-

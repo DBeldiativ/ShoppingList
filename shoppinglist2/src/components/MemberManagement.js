@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const MemberManagement = ({ members, onAddMember, onRemoveMember }) => {
+const MemberManagement = ({ members = [], onAddMember, onRemoveMember }) => {
     const [newMemberId, setNewMemberId] = useState('');
 
     return (
@@ -35,3 +35,4 @@ const MemberManagement = ({ members, onAddMember, onRemoveMember }) => {
 };
 
 export default MemberManagement;
+
