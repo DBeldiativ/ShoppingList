@@ -8,10 +8,11 @@ export const UserProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState({
         id: "user123", // Defaultní uživatel
         name: "John Doe",
+        role: "owner", // Role uživatele (defaultně vlastník)
     });
 
-    const switchUser = (newUserId, newUserName) => {
-        setCurrentUser({ id: newUserId, name: newUserName });
+    const switchUser = (newUserId, newUserName, newRole) => {
+        setCurrentUser({ id: newUserId, name: newUserName, role: newRole });
     };
 
     return (
@@ -23,5 +24,6 @@ export const UserProvider = ({ children }) => {
 
 // Hook pro přístup k uživatelským datům
 export const useUser = () => useContext(UserContext);
+
 
 
