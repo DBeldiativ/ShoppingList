@@ -1,128 +1,149 @@
 import React, { useState } from 'react';
-import ItemAddForm from './ItemAddForm';
+import { useShoppingList } from '../context/ShoppingListContext';
+import { useUser } from '../components/User/UserProvider';
 
-const ShoppingListDetail = ({
-    userRole, 
-    listData,
-    handleAddItem,
-    handleRemoveItem,
-    handleToggleItem,
-    handleEditName,
-    handleDeleteList,
-    handleAddMember,
-    handleRemoveMember,
-}) => {
-    const [newMember, setNewMember] = useState("");
-    const [newName, setNewName] = useState("");
-    const [filter, setFilter] = useState("all"); 
+function ShoppingListDetail() {
+    const {
+        shoppingLists,
+        handleAddItem,
+        handleRemoveItem,
+        handleEditName,
+        handleToggleItem,
+        handleAddMember,
+        handleRemoveMember,
+    } = useShoppingList();
+    const { currentUser, switchUser } = useUser();
 
-    const isOwner = userRole === 'owner'; 
+    const list = shoppingLists[0];
+    const isOwner = list.owner === currentUser.id;
 
-    const handleMemberChange = (e) => {
-        setNewMember(e.target.value);
+    const [newItemName, setNewItemName] = useState('');
+    const [newListName, setNewListName] = useState(list.name);
+    const [newMemberId, setNewMemberId] = useState('');
+    const [showResolvedOnly, setShowResolvedOnly] = useState(false);
+
+    const handleSwitchToOwner = () => {
+        switchUser(list.owner, "Vlastník");
     };
 
-    const handleMemberSubmit = (e) => {
-        e.preventDefault();
-        if (newMember.trim()) {
-            handleAddMember(newMember);
-            setNewMember(""); 
+    const handleSwitchToMember = () => {
+        if (list.members.length > 0) {
+            switchUser(list.members[0], "Člen");
         }
     };
 
-    const handleNameChange = (e) => {
-        setNewName(e.target.value);
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (newName.trim()) {
-            handleEditName(newName);
-            setNewName(""); 
-        }
-    };
-
-    
-    const handleFilterChange = (e) => {
-        setFilter(e.target.value);
-    };
+    const filteredItems = showResolvedOnly
+        ? list.items.filter((item) => item.isResolved)
+        : list.items;
 
     return (
         <div>
-            <h1>{listData.name}</h1>
+            <h1>{list.name}</h1>
+            <p>Přihlášený uživatel: {currentUser.name}</p>
+            <button onClick={handleSwitchToOwner}>Přepnout na vlastníka</button>
+            <button onClick={handleSwitchToMember}>Přepnout na člena</button>
 
-            {/* Podmíněné vykreslení pouze pro vlastníka */}
             {isOwner && (
-                <>
-                    <button onClick={handleDeleteList}>Smazat seznam</button>
-                    <form onSubmit={handleSubmit}>
-                        <input
-                            type="text"
-                            value={newName}
-                            onChange={handleNameChange}
-                            placeholder="Nový název seznamu"
-                        />
-                        <button type="submit">Uložit</button>
-                    </form>
-                </>
+                <div>
+                    <input
+                        type="text"
+                        value={newListName}
+                        onChange={(e) => setNewListName(e.target.value)}
+                        placeholder="Zadejte nový název seznamu"
+                    />
+                    <button onClick={() => handleEditName(list.id, newListName)}>
+                        Uložit název
+                    </button>
+                </div>
             )}
 
-            {/* Zobraz seznam položek */}
-            <h2>Položky</h2>
-            <label>
-                Filtruj položky:
-                <select value={filter} onChange={handleFilterChange}>
-                    <option value="all">Vše</option>
-                    <option value="unresolved">Nevyřešené</option>
-                </select>
-            </label>
-            <ul>
-                {listData.items
-                    .filter(item => 
-                        filter === "unresolved" ? !item.isResolved : true
-                    )
-                    .map(item => (
-                        <li key={item.id}>
-                            {item.name} {item.isResolved ? '(vyřešeno)' : ''}
-                            <button onClick={() => handleToggleItem(item.id)}>Toggle</button>
-                            <button onClick={() => handleRemoveItem(item.id)}>Odstranit</button>
-                        </li>
-                    ))}
-            </ul>
+            <button onClick={() => setShowResolvedOnly(!showResolvedOnly)}>
+                {showResolvedOnly ? "Zobrazit všechny položky" : "Zobrazit pouze vyřešené"}
+            </button>
 
-            {/* Přidej formulář pro přidání položky */}
-            <ItemAddForm handleAdd={handleAddItem} />
-
-            {/* Zobraz členy, ale pouze vlastník může odebírat členy */}
-            <h2>Členové</h2>
             <ul>
-                {listData.members.map((member, index) => (
-                    <li key={index}>
-                        {member}
-                        {isOwner && (
-                            <button onClick={() => handleRemoveMember(member)}>Odstranit člena</button>
-                        )}
+                {filteredItems.map((item) => (
+                    <li key={item.id}>
+                        <span
+                            style={{
+                                textDecoration: item.isResolved ? 'line-through' : 'none',
+                            }}
+                        >
+                            {item.name}
+                        </span>
+                        <button onClick={() => handleToggleItem(list.id, item.id)}>
+                            {item.isResolved ? "Označit jako nevyřešené" : "Označit jako vyřešené"}
+                        </button>
+                        <button onClick={() => handleRemoveItem(list.id, item.id)}>Odebrat</button>
                     </li>
                 ))}
             </ul>
 
-            {/* Formulář pro přidání člena pouze pro vlastníka */}
+            <input
+                type="text"
+                value={newItemName}
+                onChange={(e) => setNewItemName(e.target.value)}
+                placeholder="Název nové položky"
+            />
+            <button
+                onClick={() => {
+                    if (newItemName.trim() !== "") {
+                        handleAddItem(list.id, newItemName);
+                        setNewItemName('');
+                    } else {
+                        alert("Název položky nesmí být prázdný!");
+                    }
+                }}
+            >
+                Přidat položku
+            </button>
+
             {isOwner && (
-                <>
-                    <h2>Přidat člena</h2>
-                    <form onSubmit={handleMemberSubmit}>
-                        <input
-                            type="text"
-                            value={newMember}
-                            onChange={handleMemberChange}
-                            placeholder="Jméno nového člena"
-                        />
-                        <button type="submit">Přidat člena</button>
-                    </form>
-                </>
+                <div>
+                    <h3>Správa členů</h3>
+                    <ul>
+                        {list.members.map((member) => (
+                            <li key={member}>
+                                {member}
+                                <button
+                                    onClick={() => handleRemoveMember(list.id, member)}
+                                >
+                                    Odebrat člena
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                    <input
+                        type="text"
+                        value={newMemberId}
+                        onChange={(e) => setNewMemberId(e.target.value)}
+                        placeholder="ID nebo jméno nového člena"
+                    />
+                    <button
+                        onClick={() => {
+                            if (newMemberId.trim() !== "") {
+                                handleAddMember(list.id, newMemberId);
+                                setNewMemberId('');
+                            } else {
+                                alert("ID člena nesmí být prázdné!");
+                            }
+                        }}
+                    >
+                        Přidat člena
+                    </button>
+                </div>
             )}
         </div>
     );
-};
+}
 
 export default ShoppingListDetail;
+
+
+
+
+
+
+
+
+
