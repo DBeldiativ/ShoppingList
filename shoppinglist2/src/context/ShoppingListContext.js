@@ -3,6 +3,7 @@ import React, { createContext, useState, useContext } from 'react';
 const ShoppingListContext = createContext();
 
 export const ShoppingListProvider = ({ children }) => {
+    // Data s více seznamy a různými vlastníky
     const [shoppingLists, setShoppingLists] = useState([
         {
             id: 1,
@@ -14,10 +15,22 @@ export const ShoppingListProvider = ({ children }) => {
                 { id: 2, name: "Mléko", isResolved: true },
             ],
         },
+        {
+            id: 2,
+            name: "Office Supplies",
+            owner: "user124",
+            members: ["user123", "user125"],
+            items: [
+                { id: 3, name: "Papír", isResolved: false },
+                { id: 4, name: "Tužky", isResolved: false },
+            ],
+        },
     ]);
 
+    // Aktuálně přihlášený uživatel
     const [currentUser, setCurrentUser] = useState("user123");
 
+    // Přidání položky do seznamu
     const handleAddItem = (listId, itemName) => {
         setShoppingLists((prevLists) =>
             prevLists.map((list) =>
@@ -34,6 +47,7 @@ export const ShoppingListProvider = ({ children }) => {
         );
     };
 
+    // Odebrání položky ze seznamu
     const handleRemoveItem = (listId, itemId) => {
         setShoppingLists((prevLists) =>
             prevLists.map((list) =>
@@ -47,6 +61,7 @@ export const ShoppingListProvider = ({ children }) => {
         );
     };
 
+    // Přepnutí stavu položky (vyřešená/nevyřešená)
     const handleToggleItem = (listId, itemId) => {
         setShoppingLists((prevLists) =>
             prevLists.map((list) =>
@@ -64,6 +79,7 @@ export const ShoppingListProvider = ({ children }) => {
         );
     };
 
+    // Úprava názvu seznamu
     const handleEditName = (listId, newName) => {
         setShoppingLists((prevLists) =>
             prevLists.map((list) =>
@@ -72,6 +88,7 @@ export const ShoppingListProvider = ({ children }) => {
         );
     };
 
+    // Přidání člena do seznamu
     const handleAddMember = (listId, memberId) => {
         setShoppingLists((prevLists) =>
             prevLists.map((list) =>
@@ -87,6 +104,7 @@ export const ShoppingListProvider = ({ children }) => {
         );
     };
 
+    // Odebrání člena ze seznamu
     const handleRemoveMember = (listId, memberId) => {
         setShoppingLists((prevLists) =>
             prevLists.map((list) =>
@@ -115,6 +133,7 @@ export const ShoppingListProvider = ({ children }) => {
     );
 };
 
+// Hook pro přístup k datům a funkcím
 export const useShoppingList = () => useContext(ShoppingListContext);
 
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { UserProvider } from './components/User/UserProvider';
 import { ShoppingListProvider } from './context/ShoppingListContext';
-import ShoppingListDetail from './components/ShoppingListDetail';
+import ShoppingListDetailContainer from './components/ShoppingListDetailContainer';
 import './App.css';
 
 function App() {
@@ -9,7 +9,7 @@ function App() {
         <div className="App">
             <UserProvider>
                 <ShoppingListProvider>
-                    <ShoppingListDetail />
+                    <ShoppingListDetailContainer />
                 </ShoppingListProvider>
             </UserProvider>
         </div>
@@ -17,6 +17,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
