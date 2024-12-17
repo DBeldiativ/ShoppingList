@@ -22,9 +22,9 @@ const ShoppingListDetailContainer = () => {
   } = useShoppingList();
 
   const { currentUser, switchUser } = useUser();
-  const [currentListId, setCurrentListId] = useState(1); 
-  const [showResolvedOnly, setShowResolvedOnly] = useState(false); 
-  const [newItemName, setNewItemName] = useState(""); 
+  const [currentListId, setCurrentListId] = useState(1);
+  const [showResolvedOnly, setShowResolvedOnly] = useState(false);
+  const [newItemName, setNewItemName] = useState("");
 
   const currentList = shoppingLists.find((list) => list.id === currentListId);
 
@@ -34,7 +34,6 @@ const ShoppingListDetailContainer = () => {
 
   const isOwner = currentList.owner === currentUser.id;
 
-  
   const calculateStats = (items) => {
     const solved = items.filter((item) => item.solved).length;
     const unsolved = items.length - solved;
@@ -44,7 +43,7 @@ const ShoppingListDetailContainer = () => {
     ];
   };
 
-  const COLORS = ["#0088FE", "#FF8042"]; 
+  const COLORS = ["#0088FE", "#FF8042"];
 
   const renderHeader = () => (
     <Header title={currentList.name} userName={currentUser.name} />
@@ -166,4 +165,6 @@ const ShoppingListDetailContainer = () => {
 };
 
 export default ShoppingListDetailContainer;
+
+
 
