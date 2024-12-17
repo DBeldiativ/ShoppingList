@@ -1,0 +1,7 @@
+{
+    "shoppingLists": [
+      { "id": 1, "name": "Groceries", "items": ["Milk", "Bread", "Eggs"] },
+      { "id": 2, "name": "Office Supplies", "items": ["Pens", "Paper"] }
+    ]
+  }
+  
