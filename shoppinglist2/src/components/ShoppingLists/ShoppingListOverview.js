@@ -1,34 +1,50 @@
-import React, { useState } from 'react';
-import ShoppingListItem from './ShoppingListItem';
-import CreateShoppingListModal from './CreateShoppingListModal';
-import ConfirmDeleteDialog from './ConfirmDeleteDialog';
-import './ShoppingListOverview.css';  // Importování CSS souboru
-
-const initialShoppingLists = [
-  { id: 1, name: 'Shopping List 1' },
-  { id: 2, name: 'Shopping List 2' },
-];
+import React, { useEffect, useState } from "react";
+import ShoppingListItem from "./ShoppingListItem";
+import CreateShoppingListModal from "./CreateShoppingListModal";
+import ConfirmDeleteDialog from "./ConfirmDeleteDialog";
+import { fetchShoppingLists } from "../../context/api";
+import "./ShoppingListOverview.css"; // Importování CSS
 
 const ShoppingListOverview = () => {
-  const [shoppingLists, setShoppingLists] = useState(initialShoppingLists);
+  const [shoppingLists, setShoppingLists] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newListName, setNewListName] = useState('');
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [listToDelete, setListToDelete] = useState(null);
 
+  // Načítání seznamů z API
+  useEffect(() => {
+    const loadShoppingLists = async () => {
+      try {
+        const data = await fetchShoppingLists();
+        setShoppingLists(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error loading shopping lists:", error);
+      }
+    };
+
+    loadShoppingLists();
+  }, []);
+
   const handleCreateList = () => {
     setShoppingLists([
       ...shoppingLists,
-      { id: Date.now(), name: newListName }
+      { id: Date.now(), name: newListName, items: [] },
     ]);
     setIsModalOpen(false);
     setNewListName('');
   };
 
   const handleDeleteList = () => {
-    setShoppingLists(shoppingLists.filter(list => list.id !== listToDelete.id));
+    setShoppingLists(shoppingLists.filter((list) => list.id !== listToDelete.id));
     setIsDeleteConfirmOpen(false);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
@@ -36,7 +52,7 @@ const ShoppingListOverview = () => {
       <button onClick={() => setIsModalOpen(true)}>Create New List</button>
 
       <div>
-        {shoppingLists.map(list => (
+        {shoppingLists.map((list) => (
           <ShoppingListItem
             key={list.id}
             list={list}
@@ -68,4 +84,5 @@ const ShoppingListOverview = () => {
 };
 
 export default ShoppingListOverview;
+
 

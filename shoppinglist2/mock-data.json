@@ -1,7 +1,24 @@
-{
+
+  {
     "shoppingLists": [
-      { "id": 1, "name": "Groceries", "items": ["Milk", "Bread", "Eggs"] },
-      { "id": 2, "name": "Office Supplies", "items": ["Pens", "Paper"] }
+      {
+        "id": "1",
+        "name": "Groceries",
+        "items": [
+          { "id": "101", "name": "Apples", "completed": false },
+          { "id": "102", "name": "Milk", "completed": true }
+        ],
+        "members": ["user124", "user125"]
+      },
+      {
+        "id": "2",
+        "name": "Office Supplies",
+        "items": [
+          { "id": "201", "name": "Pens", "completed": false }
+        ],
+        "members": ["user126"]
+      }
     ]
   }
+  
   
