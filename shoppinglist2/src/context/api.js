@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Přepínání mezi mock serverem a reálným API
 const USE_MOCK = process.env.REACT_APP_USE_MOCK === "true";
-const API_URL = USE_MOCK ? "http://localhost:5000" : "https://your-real-server.com";
+const API_URL = USE_MOCK ? "http://localhost:5001" : "https://your-real-server.com";
 
 // Načtení všech seznamů
 export const fetchShoppingLists = async () => {
